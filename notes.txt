@@ -1,0 +1,278 @@
+# Generating RSA keys on client (computer that is logging in):
+
+mkdir ~/.ssh
+chmod 700 ~/.ssh
+ssh-keygen -t rsa
+
+
+# Increase keysize:
+
+ssh-keygen -t rsa -b 4096
+
+
+# Transfer public key to host:
+
+ssh-copy-id <username>@<host>
+
+
+# Concatenate public key to authorized keys on host manually (w/ backup):
+
+cp authorized_keys authorized_keys_Backup
+cat id_rsa.pub >> authorized_keys
+
+
+# Scan all ports on the local host:
+
+nmap -p- 127.0.0.1
+
+
+# SSH error when using private SSH key as identity file:
+
+Permissions 0777 for 'bandit17_sshkey.private' are too open.
+It is required that your private key files are NOT accessible by others.
+
+# Private SSH keys should not be too accessible. Change permissions:
+# (600 is recommend for private SSH keys)
+
+chmod 600 bandit17_sshkey.private
+
+
+# Get octal file permissions:
+
+stat -c '%a' filename
+
+
+# To allow changing of file permissions via chmod in WSL, add the following
+# to /etc/wsl.conf
+
+[automount]
+options = "metadata"
+
+
+# Linux file permissions format:
+
+-rwxr-x---
+
+# First bit:  Directory bit
+# Next three: User permissions
+# Next three: Group permissions
+# Next three: Global permissions (everyone else)
+
+
+# setuid: When set, run with file system permissions of the owner of the file
+# setgid: When set, run with file system permissions of the group of the file
+
+# Check if setuid is set:
+
+ls -l bandit20-do
+
+# Given as:
+
+-rwsr-x--- 1 bandit20 bandit19 14876 Apr 23 18:04 bandit20-do
+
+# The 's' in place of 'x' for the user permissions shows that the
+# setuid bit is set. Same is applicable for setgid:
+
+-rwxr-s--- 1 bandit20 bandit19 14876 Apr 23 18:04 bandit20-do
+
+
+# Find all files with setuid bit set:
+
+find / -perm -4000
+
+# Find all files with setuid bit set for root user:
+
+find / -user root -perm -4000
+
+# Find all files with setgid bit set:
+
+find / -perm -2000
+
+
+# Combine: All files with setuid and/or setgid bits set & root user:
+
+find / -xdev -user root \( -perm -4000 -o -perm -2000 \)
+
+
+# View a list of users on the system:
+
+cat /etc/passwd
+
+
+# Get a user ID for a given username:
+
+id -u <username>
+
+
+# Set up a network daemon to listen on a given port & send to background:
+
+nc -lnvp 60000
+<CTRL+Z>
+bg
+
+
+# Check running jobs:
+
+jobs
+
+
+# Start a job based on index:
+
+bg %1
+
+# Bring job to foreground based on index:
+
+fg %1
+
+
+# Start jobs sequentially and send to background:
+
+( command1 ; command2 ) &
+
+
+# Start jobs in parallel and send to background:
+
+command1 & command2 &
+
+
+# Kill all jobs
+
+kill -9 `jobs -ps`
+
+
+# List background jobs w/ PPID, PID, UID, etc.:
+
+ps -eaf
+
+# ... or find a specific background job via pgrep:
+# (give a phrase used in the process command)
+
+pgrep nc
+
+
+# Kill a given background job by PID:
+
+kill <pid>
+
+
+# Kill a background job via a pattern in the command.
+# e.g. Kill all custom network listening daemons:
+
+pkill nc
+
+
+# Split screen horizontally using tmux:
+
+tmux
+<CTRL+B>
+"
+
+# Switch panes:
+
+<CTRL+B>
+<ARROW KEY>
+
+
+# cron - daemon to execute scheduled commands (Vixie Cron)
+# crontab - tables for driving cron
+#	A crontab file contains instructions to the cron(8) daemon of
+#	the general form: "run this command at this time on this date"
+#	Each user has their own crontab, and commands in any given crontab
+#	will be executed as the user who owns the crontab.
+#
+# /etc/cron.d - directory containing crontab snippets
+
+# Find shell type for given username:
+
+cat /etc/passwd | grep "<username>"
+
+# ... given as:
+
+bandit26:x:11026:11026:bandit level 26:/home/bandit26:/usr/bin/showtext
+
+
+# Restricted shell: A Unix shell that restricts certain capabilities
+
+
+# Use Vi to execute a shell command after loading first file:
+
+vi -c `<command>` file
+
+
+# Execute SSH and execute command immediately after.
+# e.g. SSH into bandit24 & change directory to /tmp/
+
+ssh -p 2220 -t bandit24@bandit.labs.overthewire.org 'cd /tmp/; bash -l'
+
+
+# Initialise git:
+
+git init
+
+# Clone a Git repository into the local directory:
+
+git clone ssh://bandit27-git@localhost:2220/home/bandit27-git/repo
+
+
+# Show a log of commit history:
+
+git log
+
+
+# Show the contents of a given commit:
+# (ommit the commit ID to show the most recent)
+
+git show <commit>
+
+
+# List local & remote branches, respectively:
+
+git branch
+git branch -r
+
+
+# Check all branches available for checkout:
+
+git branch -v -a
+
+
+# Switch to branch, e.g. for /remotes/origin/dev -> 
+
+git switch <branch>
+
+
+# List current tags:
+
+git tag
+
+
+# Show a given tag:
+
+git show <tag>
+
+
+# Add a file to the index:
+
+git add <file>
+
+
+# Check .gitignore file for any file types that are being ignored:
+# (remove if necessary)
+
+cat .gitignore
+rm .gitignore
+
+
+# Commit current repo contents:
+
+git commit -m "Reason for commit"
+
+
+# Update remote repository with committed contents:
+
+git push origin master
+
+
+
+
+
